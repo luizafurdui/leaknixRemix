@@ -1,48 +1,88 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@remix-run/react";
+
+// Define the expected response type
+interface CheckResponse {
+  success: boolean;
+  leaked?: boolean;
+  message?: string;
+}
 
 export default function Banner() {
-    const bannerRef = useRef<HTMLDivElement>(null);
-    
-    useEffect(() => {
-      // Check if window is defined (for SSR compatibility)
-      if (typeof window !== "undefined") {
-        // Dynamic import of WOW.js
-        import("wow.js").then((module) => {
-          const WOW = module.default;
-          // Initialize WOW.js
-          new WOW().init();
-        }).catch(error => {
-          console.error("Failed to load WOW.js:", error);
-        });
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("wow.js")
+        .then((module) => new module.default().init())
+        .catch(console.error);
+    }
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json() as CheckResponse;
+      setLoading(false);
+
+      if (data.success) {
+        navigate(`/result?email=${email}&leaked=${data.leaked}`);
+      } else {
+        setError(data.message || "Something went wrong. Try again.");
       }
-    }, []);
-    
-  
+    } catch (error) {
+      console.error("API call failed:", error);
+      setLoading(false);
+      setError("Network error. Please check your connection and try again.");
+    }
+  }
 
   return (
     <div className="banner-area position-relative" ref={bannerRef}>
       <div className="container">
         <div className="banner-content text-center">
-          <h1 className="mb-3 wow fadeInUp">Protect your digital <br /> identity with LeakNix</h1>
+          <h1 className="mb-3 wow fadeInUp">Protect your digital identity with LeakNix</h1>
           <p className="p-lg wow fadeInUp">
             Easily check if your email, username, or phone number has <br className="d-none d-sm-block" />
-            been compromised in any known data breach
+            been compromised in any known data breach.
           </p>
 
-          <form id="leakForm">
-            <input className="p-lg me-3 wow fadeInUp" type="email" id="emailInput" name="email" placeholder="Enter email address" required />
-            <button type="submit" className="check-btn check-btn2 wow fadeInUp">Check now</button>
+          {/* Form Inside Banner */}
+          <form onSubmit={handleSubmit} className="mt-4">
+            <input
+              className="p-lg me-3 wow fadeInUp"
+              type="email"
+              name="email"
+              placeholder="Enter email address"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button 
+              type="submit" 
+              className="check-btn check-btn2 wow fadeInUp" 
+              disabled={loading}
+            >
+              {loading ? "Checking..." : "Check now"}
+            </button>
           </form>
 
-          <div id="results" className="mt-4"></div>
+          {error && <div className="text-danger mt-2">{error}</div>}
 
-          <div className="banner-btn-div">
-            <ul className="text-center">
-              <li><a href="#" className="p-sm text-white wow zoomIn"><img src="/images/icons/scan_line.svg" alt="icon" /> Quick and easy scan</a></li>
-              <li><a href="#" className="p-sm text-white wow zoomIn"><img src="/images/icons/cube_3d_line.svg" alt="icon" /> Comprehensive breach sources</a></li>
-              <li><a href="#" className="p-sm text-white wow zoomIn"><img src="/images/icons/safe_shield_line.svg" alt="icon" /> Confidential & secure</a></li>
-            </ul>
-          </div>
+          <div id="results" className="mt-4"></div>
         </div>
       </div>
     </div>

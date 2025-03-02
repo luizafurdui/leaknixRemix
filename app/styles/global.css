@@ -940,7 +940,8 @@ faq-area
 }
 
 .accordion-bg.active {
-	background-image: url(images/accordion-bg.png);
+	background-image: url("/images/accordion-bg.png"); 
+
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
@@ -1270,7 +1271,7 @@ VERIFY */
 }
 
 .pricing-title h2 {
-    color: #DC2626;
+    color: #00B6AF;
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 1rem;
@@ -1438,4 +1439,15 @@ VERIFY */
     }
   }
 
+  h1.gradientTitle {
+	display: inline-block;
+	font-size: 48px;
+	font-weight: bold;
+	background: linear-gradient(to right, #00B6AF, #fff8f3);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+  }
+  
   

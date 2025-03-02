@@ -5,7 +5,7 @@ export default function ResultSection({ email, data, loading }: { email: string;
 
   useEffect(() => {
     if (!loading && data?.found === 0) {
-      console.log("✅ No leaks detected - Animation would play here!");
+      console.log("No leaks detected - Animation would play here!");
     }
   }, [loading, data]);
 

@@ -8,7 +8,8 @@ import {
 import { useEffect } from "react";
 import globalStyles from "~/styles/global.css?url";
 import "./tailwind.css";
-
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 export const links = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -19,7 +20,6 @@ export const links = () => [
   { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" },
   { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" },
   { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" },
-  // Your styles should come AFTER external libraries to override them
   { rel: "stylesheet", href: globalStyles },
   {
     rel: "stylesheet",
@@ -29,7 +29,6 @@ export const links = () => [
 export function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
-    // Function to initialize WOW
     const initWow = () => {
       if (typeof window.WOW !== "undefined") {
         const wow = new window.WOW({
@@ -70,7 +69,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+      
+        <main>{children}</main>
+     
         <ScrollRestoration />
         <Scripts />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
